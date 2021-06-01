@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("./models/userSchema");
 const bcryptjs = require("bcryptjs");
 const makeToken = require("../middleware/makeToken");
+const restricted = require("../middleware/restricted");
 
 //Gets plants accessable to user. Requires user to be logged in.
 router.get("/plants", (req, res) => {});
@@ -57,6 +58,10 @@ router.post("/login", async (req, res) => {
       .status(200)
       .json({ message: `Welcome ${verifiedUser.username}!`, Token: token });
   }
+});
+
+router.get("/testlogin", restricted, (req, res) => {
+  res.send("Validation Working");
 });
 
 //Changes a users password. Requires a user to be logged in and pass password validation checks.
