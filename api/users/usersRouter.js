@@ -5,12 +5,18 @@ const makeToken = require("../middleware/makeToken");
 const restricted = require("../middleware/restricted");
 
 //Gets plants accessable to user. Requires user to be logged in.
-router.get("/plants", (req, res) => {});
+router.get("/plants/", restricted, async (req, res) => {
+  const id = req.decodedToken.id;
+  try {
+    const user = await User.findById(id);
+    res.status(200).send(user.ownedPlants);
+  } catch (err) {}
+});
 
 //Deletes a user and all plants associated with them. Requires user to be logged in.
-router.delete("/", (req, res) => {});
+router.delete("/", restricted, (req, res) => {});
 
-//Registers a new user.
+//Registers a new user. requires username, password, telephone number.
 router.post("/register", async (req, res) => {
   const credentials = req.body;
   //hashes the password for safe storage
@@ -44,27 +50,33 @@ router.post("/register", async (req, res) => {
   }
 });
 
-//Logs a user in.
+//Logs a user in. Requires username, password.
 router.post("/login", async (req, res) => {
   const user = await User.find({ username: req.body.username });
   const password = user[0].password;
+  //validates the user has entered the correct password
   if (bcryptjs.compareSync(req.body.password, password)) {
     const verifiedUser = {
       id: user[0]["_id"],
       username: user[0].username,
     };
     const token = makeToken(verifiedUser);
-    res
-      .status(200)
-      .json({ message: `Welcome ${verifiedUser.username}!`, Token: token });
+    res.status(200).json({
+      message: `Welcome ${verifiedUser.username}!`,
+      Token: token,
+      id: user[0]["_id"],
+    });
+  } else {
+    res.status(400).json({ message: "Incorrect Credentials" });
   }
 });
 
+//Test endpoint to make sure token is being passed correctly
 router.get("/testlogin", restricted, (req, res) => {
   res.send("Validation Working");
 });
 
 //Changes a users password. Requires a user to be logged in and pass password validation checks.
-router.patch("/password", (req, res) => {});
+router.patch("/password", restricted, (req, res) => {});
 
 module.exports = router;
