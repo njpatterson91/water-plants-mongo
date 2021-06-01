@@ -10,13 +10,23 @@ router.get("/plants/", restricted, async (req, res) => {
   try {
     const user = await User.findById(id);
     res.status(200).send(user.ownedPlants);
-  } catch (err) {}
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 });
 
 //Deletes a user and all plants associated with them. Requires user to be logged in.
-router.delete("/", restricted, (req, res) => {});
+router.delete("/", restricted, async (req, res) => {
+  const id = req.decodedToken.id;
+  try {
+    await User.findById(id).deleteOne();
+    res.status(200).json({ message: "User removed." });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
 
-//Registers a new user. requires username, password, telephone number.
+//Registers a new user. requires username, password, telephone number, email.
 router.post("/register", async (req, res) => {
   const credentials = req.body;
   //hashes the password for safe storage
@@ -27,6 +37,7 @@ router.post("/register", async (req, res) => {
     username: req.body.username,
     password: req.body.password,
     telephone: req.body.telephone,
+    email: req.body.email,
     ownedPlants: [],
   });
 
