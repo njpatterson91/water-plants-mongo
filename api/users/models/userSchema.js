@@ -1,5 +1,20 @@
 const mongoose = require("mongoose");
 
+const plantSchema = new mongoose.Schema({
+  nickname: {
+    type: String,
+    required: true,
+  },
+  species: {
+    type: String,
+    required: true,
+  },
+  h2oFrequency: {
+    type: String,
+    required: true,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -17,7 +32,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  ownedPlants: [],
+  ownedPlants: [plantSchema],
 });
 
 module.exports = mongoose.model("users", userSchema);
