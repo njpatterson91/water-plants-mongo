@@ -16,6 +16,7 @@ router.get("/plants/", restricted, async (req, res) => {
 });
 
 //Deletes a user and all plants associated with them. Requires user to be logged in.
+//TODO-require user to enter password to delete as well as being logged in.
 router.delete("/", restricted, async (req, res) => {
   const id = req.decodedToken.id;
   try {
@@ -88,6 +89,8 @@ router.get("/testlogin", restricted, (req, res) => {
 });
 
 //Changes a users password. Requires a user to be logged in and pass password validation checks.
+//TODO-Add in this route.
+//TODO-Add email password resets. Possibly via a seperate route.
 router.patch("/password", restricted, (req, res) => {});
 
 module.exports = router;
