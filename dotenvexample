@@ -1,0 +1,8 @@
+This project uses dotenv to setup secret variables. 
+
+In the projects root directory create a file called .env
+
+add these values to the file
+
+DATABASE_URL = url to mongo database
+PORT = Choose a port to use 
