@@ -1,8 +1,10 @@
+require("dotenv").config();
 const router = require("express").Router();
 const User = require("./models/userSchema");
 const bcryptjs = require("bcryptjs");
 const makeToken = require("../middleware/makeToken");
 const restricted = require("../middleware/restricted");
+const passwordSecret = process.env.PwdS || "OOGGGGIIIEEEE";
 
 //Gets plants accessable to user. Requires user to be logged in.
 router.get("/plants/", restricted, async (req, res) => {
@@ -31,13 +33,12 @@ router.delete("/", restricted, async (req, res) => {
 router.post("/register", async (req, res) => {
   const credentials = req.body;
   //hashes the password for safe storage
-  const hash = bcryptjs.hashSync(credentials.password, 10);
+  const hash = bcryptjs.hashSync(credentials.password + passwordSecret, 10);
   credentials.password = hash;
   // creates a user object based off the body of the request and the schema to be used to insert into the database
   const user = new User({
     username: req.body.username,
     password: req.body.password,
-    telephone: req.body.telephone,
     email: req.body.email,
     ownedPlants: [],
   });
