@@ -68,7 +68,7 @@ router.post("/login", async (req, res) => {
   const user = await User.find({ username: req.body.username });
   const password = user[0].password;
   //validates the user has entered the correct password
-  if (bcryptjs.compareSync(req.body.password, password)) {
+  if (bcryptjs.compareSync(req.body.password + passwordSecret, password)) {
     const verifiedUser = {
       id: user[0]["_id"],
       username: user[0].username,
